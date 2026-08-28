@@ -42,8 +42,7 @@ export default class MainTabCommands extends Plugin {
 	}
 
 	private getCurrentTab(): WorkspaceLeaf | null {
-		const ws = this.app.workspace;
-		return ws.getMostRecentLeaf(ws.rootSplit);
+		return this.app.workspace.getMostRecentLeaf();
 	}
 
 	private getTabsInCurrentTabGroup(): WorkspaceLeaf[] | null {
