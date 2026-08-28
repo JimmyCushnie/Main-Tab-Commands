@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "main-tab-commands",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Adds commands to manage the note tabs in your main view without affecting widget tabs in the sidebar.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
