@@ -33,11 +33,9 @@ export default class MainTabCommands extends Plugin {
 				id: `goto-tab-${i}`,
 				name: `Go to tab #${i} in the main area`,
 				checkCallback: (checking: boolean) => {
-					if (this.getNumberOfTabsInCurrentTabGroup() >= i) {
-						if (checking) return true;
-						this.goToTab(i - 1);
-					}
-					return false;
+					if (this.getNumberOfTabsInCurrentTabGroup() < i) return false;
+					if (!checking) this.goToTab(i - 1);
+					return true;
 				},
 			});
 		}
