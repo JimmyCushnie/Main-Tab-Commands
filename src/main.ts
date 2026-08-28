@@ -5,30 +5,32 @@ export default class MainTabCommands extends Plugin {
 		this.addCommand({
 			id: 'close',
 			name: 'Close current tab in the main area',
-			callback: () => this.getCurrentTab()?.detach(),
+			checkCallback: (checking: boolean) => {
+				if (this.getNumberOfTabsInCurrentTabGroup() < 1) return false;
+				if (!checking) this.getCurrentTab()?.detach();
+				return true;
+			},
 		});
 		this.addCommand({
 			id: 'next-tab',
 			name: 'Go to next tab in the main area',
-			callback: () => this.goToTabOffset(1),
+			checkCallback: (checking: boolean) => {
+				if (this.getNumberOfTabsInCurrentTabGroup() < 2) return false;
+				if (!checking) this.goToTabOffset(1);
+				return true;
+			},
 		});
 		this.addCommand({
 			id: 'previous-tab',
 			name: 'Go to previous tab in the main area',
-			callback: () => this.goToTabOffset(-1),
-		});
-		this.addCommand({
-			id: 'goto-tab-1',
-			name: 'Go to tab #1 in the main area',
-			callback: () => this.goToTab(0),
-		});
-		this.addCommand({
-			id: 'goto-last-tab',
-			name: 'Go to last tab in the main area',
-			callback: () => this.goToLastTab(),
+			checkCallback: (checking: boolean) => {
+				if (this.getNumberOfTabsInCurrentTabGroup() < 2) return false;
+				if (!checking) this.goToTabOffset(-1);
+				return true;
+			},
 		});
 
-		for (let i = 2; i <= 8; i++) {
+		for (let i = 1; i <= 8; i++) {
 			this.addCommand({
 				id: `goto-tab-${i}`,
 				name: `Go to tab #${i} in the main area`,
@@ -39,6 +41,16 @@ export default class MainTabCommands extends Plugin {
 				},
 			});
 		}
+
+		this.addCommand({
+			id: 'goto-last-tab',
+			name: 'Go to last tab in the main area',
+			checkCallback: (checking: boolean) => {
+				if (this.getNumberOfTabsInCurrentTabGroup() < 1) return false;
+				if (!checking) this.goToLastTab();
+				return true;
+			},
+		});
 	}
 
 	private getCurrentTab(): WorkspaceLeaf | null {
