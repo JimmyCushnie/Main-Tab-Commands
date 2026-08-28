@@ -19,6 +19,7 @@ export default class MainTabCommands extends Plugin {
 				if (!checking) this.goToTabOffset(1);
 				return true;
 			},
+			repeatable: true,
 		});
 		this.addCommand({
 			id: 'previous-tab',
@@ -28,6 +29,7 @@ export default class MainTabCommands extends Plugin {
 				if (!checking) this.goToTabOffset(-1);
 				return true;
 			},
+			repeatable: true,
 		});
 
 		for (let i = 1; i <= 8; i++) {
