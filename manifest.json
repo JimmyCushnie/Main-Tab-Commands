@@ -2,8 +2,8 @@
 	"id": "main-tab-commands",
 	"name": "Main Tab Commands",
 	"version": "1.0.0",
-	"minAppVersion": "1.0.0",
-	"description": "Manage your note tabs in Obsidian without accidentally managing your widget tabs.",
+	"minAppVersion": "1.13.7",
+	"description": "Adds commands to manage the note tabs in your main view without affecting widget tabs in the sidebar.",
 	"author": "Jimmy Cushnie",
 	"authorUrl": "https://jimmywebsite.website",
 	"isDesktopOnly": true
