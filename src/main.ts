@@ -10,13 +10,37 @@ export default class MainTabCommands extends Plugin {
 		this.addCommand({
 			id: 'next-tab',
 			name: 'Go to next tab in the main area',
-			callback: () => this.cycleMainTab(1),
+			callback: () => this.goToTabOffset(1),
 		});
 		this.addCommand({
-			id: 'prev-tab',
+			id: 'previous-tab',
 			name: 'Go to previous tab in the main area',
-			callback: () => this.cycleMainTab(-1),
+			callback: () => this.goToTabOffset(-1),
 		});
+		this.addCommand({
+			id: 'goto-tab-1',
+			name: 'Go to tab #1 in the main area',
+			callback: () => this.goToTab(0),
+		});
+		this.addCommand({
+			id: 'goto-last-tab',
+			name: 'Go to last tab in the main area',
+			callback: () => this.goToLastTab(),
+		});
+
+		for (let i = 2; i <= 8; i++) {
+			this.addCommand({
+				id: `goto-tab-${i}`,
+				name: `Go to tab #${i} in the main area`,
+				checkCallback: (checking: boolean) => {
+					if (this.getNumberOfTabsInCurrentTabGroup() >= i) {
+						if (checking) return true;
+						this.goToTab(i - 1);
+					}
+					return false;
+				},
+			});
+		}
 	}
 
 	private getCurrentTab(): WorkspaceLeaf | null {
@@ -24,20 +48,55 @@ export default class MainTabCommands extends Plugin {
 		return ws.getMostRecentLeaf(ws.rootSplit);
 	}
 
-	private cycleMainTab(offset: number) {
+	private getTabsInCurrentTabGroup(): WorkspaceLeaf[] | null {
 		const currentTab = this.getCurrentTab();
-		if (!currentTab) return;
+		if (!currentTab) return null;
 
 		const tabsInSameTabGroup: WorkspaceLeaf[] = [];
 		this.app.workspace.iterateRootLeaves((leaf) => {
 			if (leaf.parent === currentTab.parent) tabsInSameTabGroup.push(leaf);
 		});
 
-		const currentTabIndex = tabsInSameTabGroup.indexOf(currentTab);
+		if (tabsInSameTabGroup.length === 0) return null;
+		return tabsInSameTabGroup;
+	}
+
+	private getNumberOfTabsInCurrentTabGroup(): number {
+		const tabsInCurrentTabGroup = this.getTabsInCurrentTabGroup();
+		if (!tabsInCurrentTabGroup) return 0;
+		return tabsInCurrentTabGroup.length;
+	}
+
+	private goToTabOffset(offset: number) {
+		const currentTab = this.getCurrentTab();
+		const tabsInCurrentTabGroup = this.getTabsInCurrentTabGroup();
+		if (!currentTab || !tabsInCurrentTabGroup) return;
+
+		const currentTabIndex = tabsInCurrentTabGroup.indexOf(currentTab);
 		if (currentTabIndex === -1) return;
 
 		const targetTab =
-			tabsInSameTabGroup[(currentTabIndex + offset + tabsInSameTabGroup.length) % tabsInSameTabGroup.length];
+			tabsInCurrentTabGroup[
+				(currentTabIndex + offset + tabsInCurrentTabGroup.length) % tabsInCurrentTabGroup.length
+			];
+		if (targetTab) this.app.workspace.setActiveLeaf(targetTab, { focus: true });
+	}
+
+	private goToTab(index: number) {
+		const tabsInCurrentTabGroup = this.getTabsInCurrentTabGroup();
+		if (!tabsInCurrentTabGroup) return;
+
+		if (index < 0 || index >= tabsInCurrentTabGroup.length) return;
+
+		const targetTab = tabsInCurrentTabGroup[index];
+		if (targetTab) this.app.workspace.setActiveLeaf(targetTab, { focus: true });
+	}
+
+	private goToLastTab() {
+		const tabsInCurrentTabGroup = this.getTabsInCurrentTabGroup();
+		if (!tabsInCurrentTabGroup) return;
+
+		const targetTab = tabsInCurrentTabGroup.last();
 		if (targetTab) this.app.workspace.setActiveLeaf(targetTab, { focus: true });
 	}
 }
