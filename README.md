@@ -12,6 +12,15 @@ If you answered yes, then this plugin is for you! It adds commands for tab manag
 Obsidian's built-in tab management commands will apply to the tab group you most recently interacted with. So, most of the time they will affect your note tabs. But if you've just clicked on a sidebar widget, they will affect your sidebar widget tabs instead. I personally hate this behavior and so I made this plugin to make the shortcuts reliably apply to your note tabs.
 
 
+## Bonus feature!
+
+This plugin also has a setting to control which tab is focused after you close the current tab.
+
+<img src="img/focus-setting.png" width="90%">
+
+Note that this setting unfortunately only applies when closing the current tab through its "Close current tab in the main area" command. You will still get stock Obsidian behavior if you close a tab with its X button, by middle clicking on it, etc.
+
+
 ## Setup
 
 After installing and enabling the plugin, go to settings -> hotkeys and update your hotkeys to use the commands from this plugin instead of the built-in commands.
