@@ -1,13 +1,36 @@
 import { Plugin, WorkspaceLeaf } from 'obsidian';
+import { DEFAULT_SETTINGS, MainTabCommandsSettings, MainTabCommandsSettingTab } from './settings';
 
 export default class MainTabCommands extends Plugin {
+	settings!: MainTabCommandsSettings;
+
+	// The most recently focused tab in the main area, and the one focused before it.
+	private focusedTab: WorkspaceLeaf | null = null;
+	private previouslyFocusedTab: WorkspaceLeaf | null = null;
+
 	async onload() {
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			(await this.loadData()) as Partial<MainTabCommandsSettings>,
+		);
+		this.addSettingTab(new MainTabCommandsSettingTab(this.app, this));
+
+		// Track previously focused tab
+		this.registerEvent(
+			this.app.workspace.on('active-leaf-change', (leaf) => {
+				if (!leaf || leaf === this.focusedTab || !this.isMainAreaTab(leaf)) return;
+				this.previouslyFocusedTab = this.focusedTab;
+				this.focusedTab = leaf;
+			}),
+		);
+
 		this.addCommand({
 			id: 'close',
 			name: 'Close current tab in the main area',
 			checkCallback: (checking: boolean) => {
 				if (this.getNumberOfTabsInCurrentTabGroup() < 1) return false;
-				if (!checking) this.getCurrentTab()?.detach();
+				if (!checking) this.closeCurrentTab();
 				return true;
 			},
 		});
@@ -109,5 +132,41 @@ export default class MainTabCommands extends Plugin {
 
 		const targetTab = tabsInCurrentTabGroup.last();
 		if (targetTab) this.app.workspace.setActiveLeaf(targetTab, { focus: true });
+	}
+
+	private isMainAreaTab(tab: WorkspaceLeaf): boolean {
+		const root = tab.getRoot();
+		return root !== this.app.workspace.leftSplit && root !== this.app.workspace.rightSplit;
+	}
+
+	private closeCurrentTab() {
+		const currentTab = this.app.workspace.getMostRecentLeaf();
+		if (!currentTab) return;
+
+		const tabToFocus = this.getTabToFocusAfterClose(currentTab);
+		currentTab.detach();
+		if (tabToFocus) this.app.workspace.setActiveLeaf(tabToFocus, { focus: true });
+	}
+
+	private getTabToFocusAfterClose(closingTab: WorkspaceLeaf): WorkspaceLeaf | null {
+		const setting = this.settings.focusAfterCloseTab;
+
+		// Fallback to stock Obsidian behavior
+		if (setting === 'right') return null;
+
+		if (setting === 'left') {
+			const tabsInCurrentTabGroup = this.getTabsInCurrentTabGroup();
+			if (!tabsInCurrentTabGroup) return null;
+			const closingTabIndex = tabsInCurrentTabGroup.indexOf(closingTab);
+			return tabsInCurrentTabGroup[closingTabIndex - 1] ?? null;
+		}
+
+		if (setting === 'previous_tab') {
+			const previousTab = this.previouslyFocusedTab;
+			if (!previousTab || previousTab === closingTab) return null;
+			return previousTab;
+		}
+
+		return null;
 	}
 }
