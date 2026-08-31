@@ -11,6 +11,8 @@ If you answered yes, then this plugin is for you! It adds commands for tab manag
 
 Obsidian's built-in tab management commands will apply to the tab group you most recently interacted with. So, most of the time they will affect your note tabs. But if you've just clicked on a sidebar widget, they will affect your sidebar widget tabs instead. I personally hate this behavior and so I made this plugin to make the shortcuts reliably apply to your note tabs.
 
+[Forum discussion](https://forum.obsidian.md/t/main-tab-commands-slightly-better-keyboard-shortcuts-to-open-close-switch-tabs/117841)
+
 
 ## Bonus feature!
 
