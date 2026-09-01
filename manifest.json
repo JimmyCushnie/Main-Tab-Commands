@@ -1,9 +1,9 @@
 {
 	"id": "main-tab-commands",
-	"name": "Main Tab Commands",
-	"version": "1.1.0",
+	"name": "Slightly Better Tab Commands",
+	"version": "2.0.0",
 	"minAppVersion": "1.13.7",
-	"description": "Adds commands to manage the note tabs in your main view without affecting widget tabs in the sidebar.",
+	"description": "Adds commands to manage the note tabs that are slightly better than the built-in ones.",
 	"author": "Jimmy Cushnie",
 	"authorUrl": "https://jimmywebsite.website",
 	"isDesktopOnly": true

@@ -1,4 +1,4 @@
-# Main Tab Commands
+# Slightly Better Tab Commands
 
 Has this ever happened to you?
 
@@ -21,6 +21,11 @@ This plugin also has a setting to control which tab is focused after you close t
 <img src="img/focus-setting.png" width="90%">
 
 Note that this setting unfortunately only applies when closing the current tab through its "Close current tab in the main area" command. You will still get stock Obsidian behavior if you close a tab with its X button, by middle clicking on it, etc.
+
+
+## Extra bonus feature!
+
+Since version 2.0.0 there's an option to prevent closing pinned tabs. This is complementary to the [Pin Enhancer](https://community.obsidian.md/plugins/pin-enhancer) plugin, since you can't use that plugin's "close current tab" command at the same time as this plugin's.
 
 
 ## Setup
