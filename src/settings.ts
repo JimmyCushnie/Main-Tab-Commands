@@ -10,10 +10,12 @@ const FOCUS_AFTER_CLOSE_TAB_LABELS: Record<FocusAfterCloseTab, string> = {
 
 export interface MainTabCommandsSettings {
 	focusAfterCloseTab: FocusAfterCloseTab;
+	preventClosingPinnedTabs: boolean;
 }
 
 export const DEFAULT_SETTINGS: MainTabCommandsSettings = {
 	focusAfterCloseTab: 'right',
+	preventClosingPinnedTabs: false,
 };
 
 export class MainTabCommandsSettingTab extends PluginSettingTab {
@@ -26,6 +28,14 @@ export class MainTabCommandsSettingTab extends PluginSettingTab {
 					type: 'dropdown',
 					key: 'focusAfterCloseTab',
 					options: FOCUS_AFTER_CLOSE_TAB_LABELS,
+				},
+			},
+			{
+				name: 'Prevent closing pinned tabs',
+				desc: 'If enabled, using this plugin\'s "Close current tab in the main area" command on a pinned tab will not close the tab.',
+				control: {
+					type: 'toggle',
+					key: 'preventClosingPinnedTabs',
 				},
 			},
 		];

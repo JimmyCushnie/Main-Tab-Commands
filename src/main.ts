@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf } from 'obsidian';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import { DEFAULT_SETTINGS, MainTabCommandsSettings, MainTabCommandsSettingTab } from './settings';
 
 export default class MainTabCommands extends Plugin {
@@ -142,6 +142,11 @@ export default class MainTabCommands extends Plugin {
 	private closeCurrentTab() {
 		const currentTab = this.app.workspace.getMostRecentLeaf();
 		if (!currentTab) return;
+
+		if (this.settings.preventClosingPinnedTabs && currentTab.getViewState().pinned) {
+			new Notice('Cannot close pinned tab');
+			return;
+		}
 
 		const tabToFocus = this.getTabToFocusAfterClose(currentTab);
 		currentTab.detach();
