@@ -87,7 +87,7 @@ export default class MainTabCommands extends Plugin {
 		if (!currentTab) return null;
 
 		const tabsInSameTabGroup: WorkspaceLeaf[] = [];
-		this.app.workspace.iterateRootLeaves((leaf) => {
+		this.app.workspace.iterateAllLeaves((leaf) => {
 			if (leaf.parent === currentTab.parent) tabsInSameTabGroup.push(leaf);
 		});
 
