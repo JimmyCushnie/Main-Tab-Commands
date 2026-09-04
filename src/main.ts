@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, MainTabCommandsSettings, MainTabCommandsSettingTab } 
 export default class MainTabCommands extends Plugin {
 	settings!: MainTabCommandsSettings;
 
-	private mostRecentlyFocusedTabs: (WorkspaceLeaf | null)[] = [];
+	private mostRecentlyFocusedTabs: WorkspaceLeaf[] = [];
 
 	async onload() {
 		this.settings = Object.assign(
@@ -174,12 +174,25 @@ export default class MainTabCommands extends Plugin {
 		}
 
 		if (setting === 'previous_tab') {
-			this.mostRecentlyFocusedTabs.pop();
-			const previousTab = this.mostRecentlyFocusedTabs.at(-1);
-			if (!previousTab || previousTab === closingTab) return null;
-			return previousTab;
+			// Drop the tab being closed, plus any tabs that were closed by other means.
+			this.mostRecentlyFocusedTabs = this.mostRecentlyFocusedTabs.filter(
+				(tab) => tab !== closingTab && this.isTabStillOpen(tab),
+			);
+			return this.mostRecentlyFocusedTabs.at(-1) ?? null;
 		}
 
 		return null;
+	}
+
+	// Jesus, surely there's a better way to do this
+	private isTabStillOpen(tab: WorkspaceLeaf): boolean {
+		let found = false;
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			if (leaf === tab) {
+				found = true;
+				return;
+			}
+		});
+		return found;
 	}
 }
