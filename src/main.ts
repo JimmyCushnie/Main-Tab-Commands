@@ -17,7 +17,7 @@ export default class MainTabCommands extends Plugin {
 		// Track history of which tabs were focused.
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', (leaf) => {
-				if (!leaf || leaf === this.mostRecentlyFocusedTabs.at(-1) || !this.isMainAreaTab(leaf)) return;
+				if (!leaf || leaf === this.mostRecentlyFocusedTabs.last() || !this.isMainAreaTab(leaf)) return;
 
 				// If this tab was already in the history, remove it.
 				this.mostRecentlyFocusedTabs = this.mostRecentlyFocusedTabs.filter((x) => x !== leaf);
@@ -178,7 +178,7 @@ export default class MainTabCommands extends Plugin {
 			this.mostRecentlyFocusedTabs = this.mostRecentlyFocusedTabs.filter(
 				(tab) => tab !== closingTab && this.isTabStillOpen(tab),
 			);
-			return this.mostRecentlyFocusedTabs.at(-1) ?? null;
+			return this.mostRecentlyFocusedTabs.last() ?? null;
 		}
 
 		return null;
