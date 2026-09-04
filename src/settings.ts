@@ -10,11 +10,13 @@ const FOCUS_AFTER_CLOSE_TAB_LABELS: Record<FocusAfterCloseTab, string> = {
 
 export interface MainTabCommandsSettings {
 	focusAfterCloseTab: FocusAfterCloseTab;
+	previousTabHistoryLength: number;
 	preventClosingPinnedTabs: boolean;
 }
 
 export const DEFAULT_SETTINGS: MainTabCommandsSettings = {
 	focusAfterCloseTab: 'right',
+	previousTabHistoryLength: 1,
 	preventClosingPinnedTabs: false,
 };
 
@@ -28,6 +30,18 @@ export class MainTabCommandsSettingTab extends PluginSettingTab {
 					type: 'dropdown',
 					key: 'focusAfterCloseTab',
 					options: FOCUS_AFTER_CLOSE_TAB_LABELS,
+				},
+			},
+			{
+				name: 'Previous tab history length',
+				desc: 'How many previously focused tabs to remember.',
+				visible: () => this.getControlValue('focusAfterCloseTab') === 'previous_tab',
+				control: {
+					type: 'slider',
+					key: 'previousTabHistoryLength',
+					min: 1,
+					max: 100,
+					step: 1,
 				},
 			},
 			{

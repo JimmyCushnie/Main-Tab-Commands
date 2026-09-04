@@ -4,9 +4,7 @@ import { DEFAULT_SETTINGS, MainTabCommandsSettings, MainTabCommandsSettingTab } 
 export default class MainTabCommands extends Plugin {
 	settings!: MainTabCommandsSettings;
 
-	// The most recently focused tab in the main area, and the one focused before it.
-	private focusedTab: WorkspaceLeaf | null = null;
-	private previouslyFocusedTab: WorkspaceLeaf | null = null;
+	private mostRecentlyFocusedTabs: (WorkspaceLeaf | null)[] = [];
 
 	async onload() {
 		this.settings = Object.assign(
@@ -16,12 +14,21 @@ export default class MainTabCommands extends Plugin {
 		);
 		this.addSettingTab(new MainTabCommandsSettingTab(this.app, this));
 
-		// Track previously focused tab
+		// Track history of which tabs were focused.
 		this.registerEvent(
 			this.app.workspace.on('active-leaf-change', (leaf) => {
-				if (!leaf || leaf === this.focusedTab || !this.isMainAreaTab(leaf)) return;
-				this.previouslyFocusedTab = this.focusedTab;
-				this.focusedTab = leaf;
+				if (!leaf || leaf === this.mostRecentlyFocusedTabs.at(-1) || !this.isMainAreaTab(leaf)) return;
+
+				// If this tab was already in the history, remove it.
+				this.mostRecentlyFocusedTabs = this.mostRecentlyFocusedTabs.filter((x) => x !== leaf);
+				// Now add this tab to the end of the history.
+				this.mostRecentlyFocusedTabs.push(leaf);
+
+				// If history got too long, trim it.
+				const maxHistory = this.settings.previousTabHistoryLength;
+				if (this.mostRecentlyFocusedTabs.length > maxHistory) {
+					this.mostRecentlyFocusedTabs.splice(0, this.mostRecentlyFocusedTabs.length - maxHistory);
+				}
 			}),
 		);
 
@@ -167,7 +174,8 @@ export default class MainTabCommands extends Plugin {
 		}
 
 		if (setting === 'previous_tab') {
-			const previousTab = this.previouslyFocusedTab;
+			this.mostRecentlyFocusedTabs.pop();
+			const previousTab = this.mostRecentlyFocusedTabs.at(-1);
 			if (!previousTab || previousTab === closingTab) return null;
 			return previousTab;
 		}
